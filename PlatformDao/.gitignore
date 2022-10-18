@@ -8,7 +8,6 @@ node_modules
 # build
 /out
 /dist
-/frontend/dist
 
 
 # keys
