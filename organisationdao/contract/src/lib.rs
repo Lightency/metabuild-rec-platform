@@ -46,6 +46,93 @@ pub struct Device {
     }
  }
 
+// Council Members Proposal
+// Proposal structor
+#[derive(BorshDeserialize, BorshSerialize, Clone, Debug, Serialize, Deserialize)]
+pub struct MemberProposal{
+    pub proposal_name: String,
+    pub description: String,
+    pub proposal_creator: String,
+    pub beneficiary:String,
+    pub votes_for: u32,
+    pub votes_against: u32,
+    pub time_of_creation:u64,
+    pub duration_days:u64,
+    pub duration_hours:u64,
+    pub duration_min:u64,
+    pub list_voters:Vec<String>,
+    pub votes:Vec<Vote>,
+
+}
+
+impl MemberProposal{
+    pub fn new() -> Self{
+        Self{
+        proposal_name: String::new(),
+        description: String::new(),
+        proposal_creator: String::new(),
+        beneficiary:String::new(),
+        votes_for: 0,
+        votes_against: 0,
+        time_of_creation:0,
+        duration_days:0,
+        duration_hours:0,
+        duration_min:0,
+        list_voters:Vec::new(),
+        votes:Vec::new(),
+}
+    }
+    // Create a new vote 
+    // Returns a propsal contains the new vote 
+    pub fn create_vote(&mut self, vote:u8) -> Self{
+        for i in self.list_voters.clone(){
+            assert!(
+                env::signer_account_id().to_string() != i,
+                "You already voted"
+            );
+        }
+        let v = Vote{
+            address: env::signer_account_id().to_string(),
+            vote:vote,
+            time_of_vote:env::block_timestamp(),
+        };
+        self.votes.push(v);
+        if vote==0 {
+            self.votes_against=self.votes_against+1;
+        }else{
+            self.votes_for=self.votes_for+1;
+        }
+        self.list_voters.push(env::signer_account_id().to_string());
+        Self { 
+            proposal_name: self.proposal_name.clone(), 
+            description: self.description.clone(),
+            proposal_creator: self.proposal_creator.clone(),
+            beneficiary:self.beneficiary.clone(),
+            votes_for: self.votes_for, 
+            votes_against: self.votes_against, 
+            time_of_creation: self.time_of_creation, 
+            duration_days: self.duration_days, 
+            duration_hours: self.duration_hours, 
+            duration_min: self.duration_min, 
+            list_voters: self.list_voters.clone(),
+            votes: self.votes.clone() 
+        }
+    }
+
+    // Get the end time of a proposal 
+    pub fn end_time(&self) -> u64 {
+        self.time_of_creation+(self.duration_days*86400000000+self.duration_hours*3600000000+self.duration_min*60000000)
+    }
+
+    // Check if the time of a proposal is end or not 
+    pub fn check_proposal(&self)->bool{
+        if (env::block_timestamp() > self.end_time()) && (self.votes_for > self.votes_against){
+            return true;
+        }
+        return false;
+    } 
+}
+
 // PROPOSAL
 // Proposal structor 
 #[derive(BorshDeserialize, BorshSerialize, Clone, Debug, Serialize, Deserialize)]
@@ -142,15 +229,18 @@ impl Proposals {
 #[derive(BorshDeserialize, BorshSerialize, Debug, Serialize)]
 pub struct Dao {
     pub council_members : Vec<String>,
+    pub community_members : Vec<String>,
     // pub devices_list : UnorderedMap<AccountId, Vec<Device>>,
     // certificates_list : UnorderedMap<AccountId, certificate>,
     pub dao_name: String,
     pub dao_purpose: String,
     pub founder: String,
-    pub numb_members: u64,
+    pub numb_council_members: u64,
+    pub numb_community_members:u64,
     //proposal
     pub number_of_proposals:u16,
     pub proposals : Vec<Proposals>,
+    pub member_proposals: Vec<MemberProposal>,
     //Voting
     pub duration_days:u64,
     pub duration_hours:u64,
@@ -163,17 +253,38 @@ impl Dao {
     pub fn new() -> Self{
         Self {
             council_members : Vec::new(),
+            community_members: Vec::new(),
             //devices_list : UnorderedMap::new(b"m"),
             dao_name:String::new(),
             dao_purpose:String::new(),
             founder:"".to_string().try_into().unwrap(),
-            numb_members:0,
+            numb_council_members:0,
+            numb_community_members:0,
             number_of_proposals:0,
             proposals:Vec::new(),
+            member_proposals:Vec::new(),
             duration_days:0,
             duration_hours:0,
             duration_min:0,
         }
+    }
+    pub fn create_member_proposal(&mut self,proposal_name: String,beneficiary:String,description: String){
+        let proposal=MemberProposal{
+            proposal_name: proposal_name,
+            description: description,
+            beneficiary: beneficiary,
+            proposal_creator: env::signer_account_id().to_string(),
+            votes_for: 0,
+            votes_against: 0,
+            time_of_creation:env::block_timestamp(),
+            duration_days:self.duration_days,
+            duration_hours:self.duration_hours,
+            duration_min:self.duration_min,
+            list_voters:Vec::new(),
+            votes:Vec::new()
+
+        };
+        self.member_proposals.push(proposal);
     }
 
     // Create a new proposal in a dao 
@@ -225,6 +336,39 @@ impl Dao {
         let mut proposal= Proposals::new();
         for i in 0..self.proposals.len() {
             match self.proposals.get(i){
+                Some(p) => if p.proposal_name==proposal_name {
+                    proposal=p.clone();
+                },
+                None => panic!("There is no DAOs"),
+            }
+        }
+        proposal
+    }
+    // Replace a member proposal whith a new one 
+    pub fn replace_member_proposal(&mut self, proposal: MemberProposal){
+        let mut index =0;
+        for i in 0..self.member_proposals.len(){
+            match self.member_proposals.get(i){
+                Some(p) => if p.proposal_name==proposal.proposal_name {
+                    index=i;
+                },
+                None => panic!("There is no member proposals"),
+            }
+        }
+        self.member_proposals.swap_remove(index);
+        self.member_proposals.insert(index, proposal);
+    }
+
+    // Get all proposals 
+    pub fn get_member_proposals(&self) -> Vec<MemberProposal>{
+        self.member_proposals.clone()
+    }
+
+    // Get a spsific proposal 
+    pub fn get_specific_member_proposal(&self, proposal_name: String) -> MemberProposal{
+        let mut proposal= MemberProposal::new();
+        for i in 0..self.member_proposals.len() {
+            match self.member_proposals.get(i){
                 Some(p) => if p.proposal_name==proposal_name {
                     proposal=p.clone();
                 },
@@ -326,13 +470,16 @@ impl RegistrationDao {
         assert_platform();
         let mut dao = Dao {
             council_members:Vec::new(),
+            community_members:Vec::new(),
             //devices_list : UnorderedMap::new(b"m"),
             dao_name: dao_name,
             dao_purpose: dao_purpose,
             founder:env::signer_account_id().to_string(),
-            numb_members: 1,
+            numb_council_members: 1,
+            numb_community_members:0,
             number_of_proposals:0,
             proposals : Vec::new(),
+            member_proposals: Vec::new(),
             duration_days:duration_days,
             duration_hours:duration_hours,
             duration_min:duration_min,
@@ -382,6 +529,25 @@ impl RegistrationDao {
     }
 
     /*** PROPOSALS ***/
+    //create member proposal
+
+    pub fn create_member_proposal(&mut self,dao_name: String,beneficiary:String,proposal_name: String,description: String){
+        let mut dao= Dao::new();
+        let mut index=0;
+        for i in 0..self.daos.len(){
+            match self.daos.get(i){
+                Some(d) => if d.dao_name==dao_name {
+                    dao=d;
+                    index=i;
+                },
+                None => panic!("There is no DAOs"),
+            }
+        }
+        dao.create_member_proposal(proposal_name, beneficiary, description);
+        self.daos.replace(index, &dao);
+
+
+    }
 
     // create proposal
     #[payable]
@@ -453,7 +619,24 @@ impl RegistrationDao {
         proposal.end_time()
     }
 
-    /*** VOTES ***/
+    //get all member proposals in a specific dao
+    pub fn get_all_member_proposals(&self,dao_name: String)-> Vec<MemberProposal>{
+        let dao=self.get_dao(dao_name);
+        dao.get_member_proposals()
+    }
+     //get a specific member proposal in a specific dao
+     pub fn get_member_proposal(&self, dao_name: String,proposal_name: String) -> MemberProposal{
+        let dao=self.get_dao(dao_name);
+        dao.get_specific_member_proposal(proposal_name)
+    }
+
+    //get the end time of a specific proposal
+    pub fn get_end_time_member(&self, dao_name: String,proposal_name: String) -> u64 {
+        let proposal=self.get_member_proposal(dao_name, proposal_name);
+        proposal.end_time()
+    }
+
+    /*** Proposal VOTES ***/
 
     // add a vote 
     pub fn add_vote(
@@ -491,7 +674,7 @@ impl RegistrationDao {
     }
 
     // get number of votes 
-    pub fn get_nember_votes(&self, dao_name: String,proposal_name: String) -> u32 { 
+    pub fn get_number_votes(&self, dao_name: String,proposal_name: String) -> u32 { 
         let proposal= self.get_dao(dao_name.clone()).get_specific_proposal(proposal_name);
         proposal.votes_against + proposal.votes_for
     }
@@ -509,8 +692,65 @@ impl RegistrationDao {
         }
     }
 
+    /*** Member Proposal VOTES ***/
+
+    // add a vote 
+    pub fn add_member_vote(
+        &mut self,
+        dao_name: String,
+        proposal_name: String,
+        vote: u8
+    ){
+        let proposal =self.get_dao(dao_name.clone()).get_specific_member_proposal(proposal_name).create_vote(vote);
+        let mut dao= Dao::new();
+        let mut index=0;
+        for i in 0..self.daos.len() {
+            match self.daos.get(i){
+                Some(mut d) => if d.dao_name==dao_name {
+                    d.replace_member_proposal(proposal.clone());
+                    dao=d;
+                    index=i;
+                },
+                None => panic!("There is no DAOs"),
+            }
+        }
+        self.daos.replace(index, &dao);
+    }
+
+    // get votes for 
+    pub fn get_member_votes_for(&self, dao_name: String,proposal_name: String) -> u32 {
+        let proposal= self.get_dao(dao_name.clone()).get_specific_member_proposal(proposal_name);
+        proposal.votes_for
+    }
+
+    // get votes against 
+    pub fn get_member_votes_against(&self, dao_name: String,proposal_name: String) -> u32 {
+        let proposal= self.get_dao(dao_name.clone()).get_specific_member_proposal(proposal_name);
+        proposal.votes_against
+    }
+
+    // get number of votes 
+    pub fn get_number_member_votes(&self, dao_name: String,proposal_name: String) -> u32 { 
+        let proposal= self.get_dao(dao_name.clone()).get_specific_member_proposal(proposal_name);
+        proposal.votes_against + proposal.votes_for
+    }
+
+    // check the proposal and return a message
+    pub fn check_the_member_proposal(&self, dao_name: String,proposal_name: String) -> String{
+        let proposal=self.get_member_proposal(dao_name, proposal_name);
+        let check= proposal.check_proposal();
+        if check==true {
+            let msg="Proposal accepted".to_string();
+            msg
+        }else{
+            let msg="Proposal refused".to_string();
+            msg
+        }
+    }
+
+
     // Add a council member to a dao 
-    pub fn add_council (&mut self, dao_name: String, account:String) {
+    pub fn process_member_proposal (&mut self, dao_name: String, account:String) {
         let mut dao= Dao::new();
         let mut index=0;
         for i in 0..self.daos.len() {
@@ -523,9 +763,27 @@ impl RegistrationDao {
             }
         }
         dao.council_members.push(account);
-        dao.numb_members = dao.numb_members + 1;
+        dao.numb_council_members = dao.numb_council_members + 1;
         self.daos.replace(index, &dao);
     }
+
+    pub fn add_community_member (&mut self, dao_name: String, account:String) {
+        let mut dao= Dao::new();
+        let mut index=0;
+        for i in 0..self.daos.len() {
+            match self.daos.get(i){
+                Some(d) => if d.dao_name==dao_name {
+                    dao=d;
+                    index=i;
+                },
+                None => panic!("There is no DAOs"),
+            }
+        }
+        dao.community_members.push(account);
+        dao.numb_community_members = dao.numb_community_members + 1;
+        self.daos.replace(index, &dao);
+    }
+
 
     // Add a new device
     // pub fn add_device (&mut self, dao_name: String ,device_address: String ,device_data: String, device_time_of_generation: String ) {
