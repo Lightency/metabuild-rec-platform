@@ -750,7 +750,7 @@ impl RegistrationDao {
 
 
     // Add a council member to a dao 
-    pub fn process_member_proposal (&mut self, dao_name: String, account:String) {
+    pub fn process_member_proposal (&mut self, dao_name: String, proposal_name:String) {
         let mut dao= Dao::new();
         let mut index=0;
         for i in 0..self.daos.len() {
@@ -762,9 +762,10 @@ impl RegistrationDao {
                 None => panic!("There is no DAOs"),
             }
         }
-        dao.council_members.push(account);
+        let proposal=dao.get_specific_member_proposal(proposal_name);
+        if(proposal.check_proposal()){dao.council_members.push(proposal.beneficiary);
         dao.numb_council_members = dao.numb_council_members + 1;
-        self.daos.replace(index, &dao);
+        self.daos.replace(index, &dao);}
     }
 
     pub fn add_community_member (&mut self, dao_name: String, account:String) {
@@ -783,6 +784,14 @@ impl RegistrationDao {
         dao.numb_community_members = dao.numb_community_members + 1;
         self.daos.replace(index, &dao);
     }
+    pub fn get_all_council_members(&self,dao_name: String)-> Vec<String> {
+        self.get_dao(dao_name).council_members
+    }
+    pub fn get_all_community_members(&self,dao_name: String)->Vec<String>{
+        self.get_dao(dao_name).community_members
+    }
+    
+
 
 
     // Add a new device
@@ -804,7 +813,6 @@ impl RegistrationDao {
     //         }
     //     }
     //     if self.check_existance_dao(dao_name) == true {
-
     //     }
     // }
 
