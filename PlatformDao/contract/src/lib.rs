@@ -75,6 +75,7 @@ pub struct Proposals{
     pub votes:Vec<Vote>,
 }
 
+
 // Proposal implementation
 impl Proposals {
     pub fn new() -> Self{
@@ -175,6 +176,15 @@ impl Default for PlatformDao{
     }
 }
 
+// Make sure that the caller of the function is the owner
+fn assert_self() {
+    assert_eq!(
+        env::current_account_id(),
+        env::predecessor_account_id(),
+        "Can only be called by owner"
+    );
+}
+
 // Implement the PlatformDao structure
 #[near_bindgen]
 impl PlatformDao {
@@ -196,6 +206,14 @@ impl PlatformDao {
             duration_min:0,
         }
     }
+    // Delete all proposals
+    pub fn delete_all_proposals(&mut self){
+        assert_self();
+        for i in 0..self.proposals.len() {
+            self.proposals.pop();
+        }
+    }
+
     //Proposal type =0 (register organisation)
     //Proposal type =1 (delete organisation)
     pub fn create_proposal (
@@ -314,3 +332,4 @@ impl PlatformDao {
 }
     
 }
+
