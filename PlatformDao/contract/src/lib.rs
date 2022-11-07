@@ -1,5 +1,6 @@
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::ext_contract;
+use near_sdk::collections::UnorderedMap;
 use near_sdk::{env, near_bindgen, Gas};
 use serde::{Serialize,Deserialize};
 
@@ -155,13 +156,14 @@ pub struct PlatformDao {
     pub dao_purpose: String,
     pub founder: String,
     pub dao_members: Vec<String>,
+    pub assignedIssuers:UnorderedMap<u16,u16>,
     pub numb_members: u64,
     //Organisations
     pub numb_of_organisations:u32,
     pub organisations:Vec<Organisations>,
     //proposal
     pub number_of_proposals:u16,
-    pub proposals : Vec<Proposals>,
+    pub proposals: Vec<Proposals>,
     //Voting
     pub threshold:u8,
     pub duration_days:u64,
@@ -195,6 +197,7 @@ impl PlatformDao {
             dao_purpose:String::new(),
             founder:String::new(),
             dao_members:Vec::new(),
+            assignedIssuers:UnorderedMap::new(b"m"),
             organisations:Vec::new(),
             numb_of_organisations:0,
             numb_members:0,
@@ -329,6 +332,9 @@ impl PlatformDao {
         }else{
             panic!("this proposal is not validated")
         }  
+}
+pub fn assign_issuer(&mut self,organisation_dao_Id: u16,issuer_dao_Id:u16){
+    self.assignedIssuers.insert(&organisation_dao_Id, &issuer_dao_Id);
 }
     
 }
