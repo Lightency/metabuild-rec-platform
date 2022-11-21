@@ -1,95 +1,67 @@
-near-blank-project
+Inspiration
 ==================
 
-This [React] app was initialized with [create-near-app]
+Energy is one of the pillar issues that have led to the acceleration of climate challenge – and yet is key to slowing its dire effects.
+
+A huge chunk of the greenhouse gas that blankets the Earth and traps the sun’s heat is caused by energy production, resulting from the use of fossil fuels to produce electricity and generate heat.
+
+In contrast, renewable energy sources – available in abundance are naturally replenished and environmentally unharmful. At this crucial point that will make or break the human future, we need to orient investments– including investments in technology and infrastructure – to renewable energy projects to allow us to reach net-zero emissions by 2050.
+
+The issue does not reside in the funds available yet in the need for commitment and accountability; that's where Lightency steps in and builds a model aimed to accelerate renewable energy adoption using a classic method that will increase monetization and incentives. The purpose of the service is to put together a system for the issuance and management of Renewable Energy Certificates (REAs).
+
+Our solution consists of a user-friendly platform where energy producers can register as an Energy provider (EP), select the type of energy they are willing to produce, and connect the energy device to the network where the proof of generation of the REC is accomplished. Energy certificates are traded today as any other commodity; most developing countries are still unable to monetize their green energy productions and are working actively to provide an adequate regulatory framework.
 
 
-Quick Start
+What it does
 ===========
 
-To run this project locally:
+The main purpose of REC is to act as an accounting vehicle to prove that produced energy comes from a renewable source. RECs are mostly used to address sustainability reports regarding Scope 2 emissions. Our project consists of multiple key modules: registry, issuer, and transfer. Interested companies and regulators around the world can use parts of or all modules to build a platform for tracking and trading RECs.
 
-1. Prerequisites: Make sure you've installed [Node.js] ≥ 12
-2. Install dependencies: `npm install`
-3. Run the local development server: `npm run dev` (see `package.json` for a
-   full list of `scripts` you can run with `npm`)
+Thanks to the big number of stakeholders from different countries (ex: Tunisia and Nigeria) in the platform, energy providers can be utilities, private energy producers, or retail producers (households and businesses). Additionally, certificate buyers can be businesses, organizations, utilities, or traders.
 
-Now you'll have a local development environment backed by the NEAR TestNet!
-
-Go ahead and play with the app and the code. As you make code changes, the app will automatically reload.
+Issuers, on the other hand, can be governmental institutions or Public Private organizations. These institutions have several rules and protocols that need to be respected for verification, transaction confirmations, and audits. As such, we introduced a DAO-based model that allows every organization and certificate issuer to define their own rules as long as their outputs are interactions with the platform and fellow users. When operating in different countries (Tunisia, Nigeria).
 
 
-Exploring The Code
+How we built it
 ==================
 
-1. The "backend" code lives in the `/contract` folder. See the README there for
-   more info.
-2. The frontend code lives in the `/frontend` folder. `/frontend/index.html` is a great
-   place to start exploring. Note that it loads in `/frontend/assets/js/index.js`, where you
-   can learn how the frontend connects to the NEAR blockchain.
-3. Tests: there are different kinds of tests for the frontend and the smart
-   contract. See `contract/README` for info about how it's tested. The frontend
-   code gets tested with [jest]. You can run both of these at once with `npm
-   run test`.
+We used scrum methodology to synchronize and manage the teams. We worked with 4 developers, UX designers, a product owner and a content creator. We discussed with custodians, sponsors and investors to define the product and built a first version during the meta build Hackathon.
+
+Transfer:
+
+Certificates can be transferred between users without any additional actions. There are many cases where transferring certificates to another user, both within the organization and external users, would be beneficial. However, transfers should not be confused with trading certificates. No value is exchanged, and the certificates are simply moved from one account to the other.
+
+Challenges we ran into
+
+Convincing governmental institutions to use web3 applications can be challenging from one point of view but it is not impossible, especially in developing countries. We are in discussion with the National Agency of Energy Management (ANME) in Tunisia and they are open to any innovation that can enhance the local infrastructure, we are also in discussion with Rural Electrification Agency (REA) in Nigeria and they are very open to the idea, they invited us to animate a workshop where they invite Energy developers to explain web3 and Blockchain for energy.
 
 
-Deploy
-======
+Accomplishments we’re proud of
+==============================
 
-Every smart contract in NEAR has its [own associated account][NEAR accounts]. When you run `npm run dev`, your smart contract gets deployed to the live NEAR TestNet with a throwaway account. When you're ready to make it permanent, here's how.
+The lightency team partnered up with a major school of engineering in Tunisia “Ecole National d'ingénieur de Tunis ENIT “and its electrical Laboratories, in collaboration with the Mediterranean Energy Agency (MEDREC) as a sponsor and technical advisor, to set up the platform and test it before introducing it to Tunisia National Energy Agency (ANME) to be the first energy certification platform in the country.
 
+The collaboration consists of building the microgrid with PV solar and Batteries in selected university departments to produce renewable energy, certify it and transfer the resulting certificates between these departments. The process will reduce the carbon emission of the university and the departments within it (In this case, the departments are organizations, and the university administration is the issuer).
 
-Step 0: Install near-cli (optional)
--------------------------------------
-
-[near-cli] is a command line interface (CLI) for interacting with the NEAR blockchain. It was installed to the local `node_modules` folder when you ran `npm install`, but for best ergonomics you may want to install it globally:
-
-    npm install --global near-cli
-
-Or, if you'd rather use the locally-installed version, you can prefix all `near` commands with `npx`
-
-Ensure that it's installed with `near --version` (or `npx near --version`)
+Simultaneously, we are building the platform and testing our service with other organizations, such as the Mediterranean Energy Agency (MEDREC).
 
 
-Step 1: Create an account for the contract
-------------------------------------------
+What we learned
+================
 
-Each account on NEAR can have at most one contract deployed to it. If you've already created an account such as `your-name.testnet`, you can deploy your contract to `near-blank-project.your-name.testnet`. Assuming you've already created an account on [NEAR Wallet], here's how to create `near-blank-project.your-name.testnet`:
+Challenges that made us stronger:
 
-1. Authorize NEAR CLI, following the commands it gives you:
+Lightency learned to capitalize on change by taking advantage of the new legal policies that will be set up to make countries more sustainable and environmentally-friendly.
 
-      near login
+Lightency is a global project operating in several countries, including but not limited to Tunisia and Nigeria, where new policies seem to be on the horizon. These policy changes will encourage investment in green energy sources such as solar power and wind turbines and make every institution concerned consider it a priority in their business development. The coding phase to set up the registry module presented several challenges operating with different stakeholders and users from different countries (Tunisia, Nigeria). To solve the problem, Lightency team applied a more efficient model by setting up an effective DAO system–based module. The lightency system will automatically and autonomously organize operations ( registry, issuance, transfer), making it easier to operate with numerous organizations, stakeholders, and users in different countries.
 
-2. Create a subaccount (replace `YOUR-NAME` below with your actual account name):
+What’s next for Near Energy certificates
 
-      near create-account near-blank-project.YOUR-NAME.testnet --masterAccount YOUR-NAME.testnet
+As soon as platform development is finalized, ANME will be added as a first Issuer of certificates and will thus be minting the first Tunisian energy Certificates ever on Top of NEAR infrastructure.
 
+We believe this is a fundamental milestone for a more environmentally-conscious governmental and business environment. RECs will shape the way for organizations and households to be incentivized to render their use of energy more efficient and thus limit their carbon footprint.
 
-Step 2: set contract name in code
----------------------------------
-
-Modify the line in `src/config.js` that sets the account name of the contract. Set it to the account id you used above.
-
-    const CONTRACT_NAME = process.env.CONTRACT_NAME || 'near-blank-project.YOUR-NAME.testnet'
-
-
-Step 3: deploy!
----------------
-
-One command:
-
-    npm run deploy
-
-As you can see in `package.json`, this does two things:
-
-1. builds & deploys smart contract to NEAR TestNet
-2. builds & deploys frontend code to GitHub using [gh-pages]. This will only work if the project already has a repository set up on GitHub. Feel free to modify the `deploy` script in `package.json` to deploy elsewhere.
-
-
-Troubleshooting
-===============
-
-On Windows, if you're seeing an error containing `EPERM` it may be related to spaces in your path. Please see [this issue](https://github.com/zkat/npx/issues/209) for more details.
+Built With javascript near react rust Try it out GitHub Repo
 
 
   [React]: https://reactjs.org/
