@@ -1,9 +1,11 @@
-<div align="center">
-<img src="https://rishavanand.github.io/static/images/greetings.gif" align="center" style="width: 100%" />
-</div>  
+
 
 Inspiration
 ==================
+
+
+<img src="https://rishavanand.github.io/static/images/greetings.gif" align="center" style="width: 100%" />
+
 
 Energy is one of the pillar issues that have led to the acceleration of climate challenge – and yet is key to slowing its dire effects.
 
