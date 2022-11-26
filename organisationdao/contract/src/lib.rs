@@ -62,7 +62,6 @@ pub struct MemberProposal{
     pub duration_min:u64,
     pub list_voters:Vec<String>,
     pub votes:Vec<Vote>,
-
 }
 
 impl MemberProposal{
