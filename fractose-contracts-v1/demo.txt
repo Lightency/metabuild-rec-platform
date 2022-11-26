@@ -1,0 +1,13 @@
+1-near call nft-lightency.testnet nft_mint '{"token_id": "'token-$RANDOM'", "receiver_id": "'issuerdao.testnet'", "token_metadata": {"title": "rec", "description": "test", "media": "https://www.disruptunisia.com/couverture/5dc0235d47b6c.jpg" }}' --accountId nft-lightency.testnet --amount 1
+
+2-near call nft-lightency.testnet nft_approve '{"token_id": "'token-1022'","account_id": "'issuerdao.testnet'"}' --accountId issuerdao.testnet 
+--amount 1
+
+3-near call issuerdao.testnet fill_share_holders '{"sh_id":"thamerdridi.testnet", "nshares":"1000"}' --accountId issuerdao.testnet
+  near call issuerdao.testnet fill_share_holders '{"sh_id":"alaaa.testnet", "nshares":"1000"}' --accountId issuerdao.testnet
+  near call issuerdao.testnet fill_share_holders '{"sh_id":"firas.testnet", "nshares":"1000"}' --accountId issuerdao.testnet
+
+4-near call issuerdao.testnet securitize '{"nft_contract_address": "'nft-lightency.testnet'", "nft_token_id": "'token-1022'", "shares_count": "3000", "decimals": 4, "exit_price": "30000" }' --accountId issuerdao.testnet --amount 5 --gas 300000000000000
+
+5-near view nft-lightency-testnet-token-1022.issuerdao.testnet ft_balance_of '{"account_id": "alaaa.testnet"}' --accountId issuerdao.testnet 
+  near view nft-lightency-testnet-token-1022.issuerdao.testnet ft_balance_of '{"account_id": "thamerdridi.testnet"}' --accountId issuerdao.testnet

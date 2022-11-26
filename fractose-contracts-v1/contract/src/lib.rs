@@ -142,7 +142,7 @@ impl Fractose {
         self.shares_to_nft_address
             .insert(&shares_contract.clone().try_into().unwrap(), &nft_address);
 
-        non_fungible_token::ext("dev-1618440176640-7650905".to_string().try_into().unwrap())
+        non_fungible_token::ext("nft-lightency.testnet".to_string().try_into().unwrap())
             .with_attached_deposit(1)
             .with_static_gas(Gas(2 * TGAS))
             .nft_transfer(
