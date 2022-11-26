@@ -111,13 +111,13 @@ impl Fractose {
             .create_account()
             .transfer(25_00000000000000000000000)
             .add_full_access_key(env::signer_account_pk())
-            .deploy_contract(include_bytes!("../../shares/res/shares.wasm").to_vec());
+            .deploy_contract(include_bytes!("../../shares/res/nft_shares.wasm").to_vec());
 
         
-        
         let owner: AccountId = env::signer_account_id().try_into().unwrap();
-        //let owner: AccountId = env::predecessor_account_id();
+        
         // Call shares contract constructor
+        
         shares::ext(shares_contract.clone().try_into().unwrap())
             .with_static_gas(Gas(2 * TGAS))
             .create(

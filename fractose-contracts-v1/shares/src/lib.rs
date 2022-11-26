@@ -54,7 +54,6 @@ impl Shares {
     #[init]
     pub fn create(nft_contract_address: AccountId, nft_token_id: TokenId, owner_id: ValidAccountId, shares_count: U128, decimals: u8, share_price: U128, share_holders: Vec<ValidAccountId>, n_shares: Vec<U128>) -> Self {
         // TODO allow payment in NEP-141 fungible tokens
-
         assert!(!env::state_exists(), "Already initialized");
 
         let metadata = SharesMetadata {
@@ -81,15 +80,11 @@ impl Shares {
         
         this.token.internal_register_account(&owner_id.clone().try_into().unwrap());
         this.token.internal_deposit(&owner_id.clone().try_into().unwrap(), shares_count.0);
-       
-        /*for i in 0..share_holders.len(){
-            this.token.internal_register_account(&share_holders[i].clone().try_into().unwrap());
-            this.token.ft_transfer(share_holders[i].clone().try_into().unwrap(), n_shares[i], Some("".to_string()));
-            }*/
         
         for i in 0..share_holders.len(){
         this.token.internal_register_account(&share_holders[i].clone().try_into().unwrap());
-        this.token.internal_transfer(&owner_id.clone().try_into().unwrap(),&share_holders[i].clone().try_into().unwrap(), n_shares[i].0, Some("".to_string()));}
+        this.token.internal_transfer(&owner_id.clone().try_into().unwrap(),&share_holders[i].clone().try_into().unwrap(), n_shares[i].0, Some("".to_string()));
+        }
         
 
         // Emit event
